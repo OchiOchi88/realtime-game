@@ -1,0 +1,62 @@
+'Aさん、Bさん２人の場合
+@startuml
+
+actor A as Aさん
+participant MagicOnion as サーバー
+actor B as Bさん
+
+'連番の自動付与
+autonumber
+
+note over サーバー : 参加者：Aさん,Bさん
+
+'Aさんが退出
+Aさん -> サーバー : 部屋から退出
+サーバー --> Aさん : 「部屋から退出しました」
+サーバー --> Bさん : 「 Aさん が部屋を退出しました」
+
+note over サーバー : 参加者：Bさん
+
+'Bさんが退出
+Bさん -> サーバー : 部屋から退出
+サーバー --> Bさん : 「部屋から退出しました」
+
+note over サーバー : 参加者：なし
+
+@enduml
+
+'A~Cさん３人の場合
+@startuml
+
+actor A as Aさん
+actor B as Bさん
+participant MagicOnion as サーバー
+actor C as Cさん
+
+'連番の自動付与
+autonumber
+
+note over サーバー : 参加者：Aさん,Bさん,Cさん
+
+'Aさんが退出
+Aさん -> サーバー : 部屋から退出
+サーバー --> Aさん : 「部屋から退出しました」
+サーバー --> Bさん : 「 Aさん が部屋を退出しました」
+サーバー --> Cさん : 「 Aさん が部屋を退出しました」
+
+note over サーバー : 参加者：Bさん,Cさん
+
+'Bさんが退出
+Bさん -> サーバー : 部屋から退出
+サーバー --> Bさん : 「部屋から退出しました」
+サーバー --> Cさん : 「 Bさん が部屋を退出しました」
+
+note over サーバー : 参加者：,Cさん
+
+'Cさんが退出
+Cさん -> サーバー : 部屋から退出
+サーバー --> Cさん : 「部屋から退出しました」
+
+note over サーバー : 参加者：なし
+
+@enduml
