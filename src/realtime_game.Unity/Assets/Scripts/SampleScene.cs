@@ -20,7 +20,7 @@ public class SampleScene : MonoBehaviour
             var client = MagicOnionClient.Create<IUserService>(channel);
 
             var result = await client.RegistUserAsync(registName);
-            Debug.Log("“o˜^¬Œ÷!");
+            Debug.Log("ƒƒOƒCƒ“‚µ‚Ü‚µ‚½!");
         }
         catch (Exception e)
         {

@@ -48,6 +48,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         {
             if (OnJoinedUser != null)
             {
+                Debug.Log(user.UserData.Id);
+                Debug.Log(user.UserData.Name);
+                Debug.Log(user.UserData.Token);
                 OnJoinedUser(user);
             }
         }

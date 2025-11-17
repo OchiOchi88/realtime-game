@@ -3,6 +3,8 @@ using realtime_game.Server.Models.Contexts;
 using realtime_game.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using realtime_game.Shared.Models.Contexts;
+using System.Diagnostics;
+
 
 namespace Server.StreamingHubs
 {
@@ -42,6 +44,12 @@ namespace Server.StreamingHubs
 
             // 自分以外のルーム参加者全員にユーザーの入室通知を送信
             this.roomContext.Group.Except([this.ConnectionId]).OnJoin(joinedUser);
+
+            //  コンソールにユーザー情報を表示する
+            Console.WriteLine(user.Name + "がルーム「" + roomName + "」に参加しました");
+            Console.WriteLine("接続ID:" + joinedUser.ConnectionId);
+            Console.WriteLine($"ユーザーID:" + user.Id);
+            Console.WriteLine($"ユーザー名:" + user.Name);
 
             // 入室リクエストをしたユーザーに参加者の情報をリストで返す
             return this.roomContext.RoomUserDataList.Select(

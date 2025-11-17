@@ -1,14 +1,19 @@
-﻿using MagicOnion;
+﻿using Grpc.Core;
+using MagicOnion;
 using MagicOnion.Server;
+using Microsoft.AspNetCore.Diagnostics;
 using realtime_game.Server.Models.Contexts;
 using realtime_game.Shared.Interfaces.Services;
 using realtime_game.Shared.Models.Contexts;
 using System.ComponentModel;
+using System.Net.Http.Headers;
+
 
 public class UserService : ServiceBase<IUserService>, IUserService
 {
     string[] name = { "Jobi", "Yamagami", "Chiba", "Sakai" };
     string[] token = { "Cyber", "Usausa", "Mountain", "SunGlass" };
+    
     public async UnaryResult<int> RegistUserAsync(string name)
     {
         //  テーブルにレコード追加
@@ -18,7 +23,9 @@ public class UserService : ServiceBase<IUserService>, IUserService
         if(context.Users.Count() > 0 &&
             context.Users.Where(user => user.Name == name).Count() > 0)
         {
-            throw new ReturnStatusException(Grpc.Core.StatusCode.InvalidArgument, "ユーザー名が重複しました...");
+            Console.WriteLine(name + "がログインしました。");
+            return 0;
+            //throw new ReturnStatusException(Grpc.Core.StatusCode.OK, "存在するユーザーのためログインしました！");
         }
 
         //  tokenをランダムで生成(仮)
