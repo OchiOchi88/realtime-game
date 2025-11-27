@@ -4,12 +4,15 @@ using realtime_game.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using realtime_game.Shared.Models.Contexts;
 using System.Diagnostics;
+using UnityEngine;
+//using realtime_game.Server.StreamingHubs;
 
 
 namespace Server.StreamingHubs
 {
     public class RoomHub(RoomContextRepository roomContextRepository) : StreamingHubBase<IRoomHub, IRoomHubReceiver>, IRoomHub
     {
+        private string roomNameHolder;
         private RoomContextRepository roomContextRepos;
         private RoomContext roomContext;
 
@@ -24,6 +27,7 @@ namespace Server.StreamingHubs
                 if (this.roomContext == null)
                 { // 無かったら生成
                     this.roomContext = roomContextRepos.CreateContext(roomName);
+                    roomNameHolder = roomName;
                 }
             }
 
@@ -72,6 +76,43 @@ namespace Server.StreamingHubs
         public Task<Guid> GetConnectionId()
         {
             return Task.FromResult<Guid>(this.ConnectionId);
+        }
+
+        //  ルームから退室する
+        public Task LeaveAsync()
+        {
+            //  退室したことを全メンバーに通知
+            this.roomContext.Group.All.OnLeave(this.ConnectionId);
+
+            //  ルーム内のメンバーから自分を削除
+            this.roomContext.Group.Remove(this.ConnectionId);
+
+            //  ルームデータから退室↓ユーザーを削除
+            this.roomContext.RoomUserDataList.Remove(this.ConnectionId);
+            if (roomContext.Group.Except([this.ConnectionId]) == null)   //  もし、自分が最後の一人なら
+            {
+                roomContextRepos.RemoveContext(roomNameHolder); //  ルームも削除
+            }
+            return Task.CompletedTask;
+        }
+        // 移動
+        public Task MoveAsync(Vector3 pos, Quaternion rot)
+        {
+
+            //======================================================================================================
+            //                                          中  断  地  点
+            //======================================================================================================
+
+            Console.WriteLine("RoomUsersPosition.pos:" + this.roomContext.RoomUserDataList[this.ConnectionId].pos);    // <-- roomContext.RoomUserDataListがNullReferanceエラーを出す。
+
+            // 位置情報を記録
+            this.roomContext.RoomUserDataList[this.ConnectionId].pos = pos;
+            // 回転情報を記録
+            this.roomContext.RoomUserDataList[this.ConnectionId].rot = rot;
+            // 移動情報を自分以外の全メンバーに通知
+            this.roomContext.Group.Except([this.ConnectionId]).OnMove(this.ConnectionId, pos, rot);
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -5,6 +5,8 @@ using realtime_game.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
 using System;
 using UnityEngine;
+using realtime_game.Shared.Models.Contexts;
+using System.Threading.Tasks;
 
 public class RoomModel : BaseModel, IRoomHubReceiver
 {
@@ -16,6 +18,15 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     //　ユーザー接続通知
     public Action<JoinedUser> OnJoinedUser { get; set; }
+
+    // ユーザー切断通知
+    public Action<Guid> OnLeftUser { get; set; }
+
+    // ユーザー切断通知
+    public Action OnLeftUserAll { get; set; }
+
+    public Action<Guid, Vector3, Quaternion> OnMoveCharacter { get; set; }
+
 
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
@@ -56,6 +67,17 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         }
     }
 
+    // 退室
+    public async UniTask LeaveAsync()
+    {
+        await roomHub.LeaveAsync();
+        Debug.Log("退室完了");
+
+        // 自分以外のオブジェクトを削除する
+        //Destroy();
+    }
+
+
     //　入室通知 (IRoomHubReceiverインタフェースの実装)
     public void OnJoin(JoinedUser user)
     {
@@ -63,6 +85,27 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         {
             OnJoinedUser(user);
         }
+    }
+    public void OnLeave(Guid connectionId)
+    {
+        if (OnLeftUser != null)
+        {
+            OnLeftUser(connectionId);
+        }
+    }
+
+    //位置・回転を送信する
+    public Task MoveAsync(Vector3 pos, Quaternion rot)
+    {
+        Debug.Log("roomHub:" + roomHub);
+        Debug.Log("roomHubPos:" + pos);
+        Debug.Log("roomHubRot:" + rot);
+        roomHub.MoveAsync(pos,rot);
+        return Task.CompletedTask;
+    }
+    public void OnMove(Guid connectionId, Vector3 pos, Quaternion rot)
+    {
+        OnMoveCharacter(connectionId, pos, rot);
     }
 
 }

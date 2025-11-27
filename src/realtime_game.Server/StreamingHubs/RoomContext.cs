@@ -1,6 +1,8 @@
 ﻿using Cysharp.Runtime.Multicast;
+//using realtime_game.Server.StreamingHubs;
 using realtime_game.Shared.Interfaces.StreamingHubs;
 using Shared.Interfaces.StreamingHubs;
+using UnityEngine;
 
 namespace Server.StreamingHubs
 {
@@ -8,6 +10,8 @@ namespace Server.StreamingHubs
     public class RoomUserData
     {
         public JoinedUser JoinedUser;
+        internal Vector3 pos;   //  デバッグ用の一時的な変数
+        internal Quaternion rot;    //  デバッグ用の一時的な変数
     }
     public class RoomContext : IDisposable
     {

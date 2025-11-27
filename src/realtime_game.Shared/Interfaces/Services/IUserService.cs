@@ -1,4 +1,5 @@
 ﻿using MagicOnion;
+using realtime_game.Shared.Models.Contexts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,8 @@ namespace realtime_game.Shared.Interfaces.Services
         //  ユーザーを登録するAPI
         UnaryResult<int> RegistUserAsync(string name);
 
-        //  id指定でユーザー一覧を取得するAPI
-        UnaryResult<string[]> GetUserAsync(int id);
+        //  id指定でユーザー情報を取得するAPI
+        UnaryResult<User> GetUserAsync(int id);
 
         //  ユーザー一覧を取得するAPI
         UnaryResult<string[]> GetAllUserAsync();

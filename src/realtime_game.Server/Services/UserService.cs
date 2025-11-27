@@ -48,15 +48,13 @@ public class UserService : ServiceBase<IUserService>, IUserService
         await context.SaveChangesAsync();
         return user.Id;
     }
-    public async UnaryResult<string[]> GetUserAsync(int id)
+    public async UnaryResult<User> GetUserAsync(int id)
     {
         //  id指定でユーザー情報を取得するAPI
+        using var context = new GameDbContext();
 
-
-        string[] returnInfo = new string[2];
-        returnInfo[0] = name[id];
-        returnInfo[1] = token[id];
-        return returnInfo;
+        User user = context.Users.Where(user => user.Id == id).First();
+        return user;
     }
     public async UnaryResult<string[]> GetAllUserAsync()
     {
