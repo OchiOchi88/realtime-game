@@ -10,8 +10,11 @@ namespace Server.StreamingHubs
     public class RoomUserData
     {
         public JoinedUser JoinedUser;
-        internal Vector3 pos;   //  デバッグ用の一時的な変数
-        internal Quaternion rot;    //  デバッグ用の一時的な変数
+
+        public Vector3 pos { get; set; }
+        public Quaternion rot { get; set; }
+        //public Vector3 pos;   //  デバッグ用の一時的な変数
+        //public Quaternion rot;    //  デバッグ用の一時的な変数
     }
     public class RoomContext : IDisposable
     {

@@ -26,6 +26,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action OnLeftUserAll { get; set; }
 
     public Action<Guid, Vector3, Quaternion> OnMoveCharacter { get; set; }
+    public bool IsJoined { get; private set; } = false;
 
 
     //　MagicOnion接続処理
@@ -65,6 +66,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
                 OnJoinedUser(user);
             }
         }
+        IsJoined = true;
     }
 
     // 退室
@@ -74,7 +76,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         Debug.Log("退室完了");
 
         // 自分以外のオブジェクトを削除する
-        //Destroy();
+        if(OnJoinedUser != null)
+        {
+            OnLeftUserAll?.Invoke();
+        }
     }
 
 
@@ -97,15 +102,19 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //位置・回転を送信する
     public Task MoveAsync(Vector3 pos, Quaternion rot)
     {
-        Debug.Log("roomHub:" + roomHub);
-        Debug.Log("roomHubPos:" + pos);
-        Debug.Log("roomHubRot:" + rot);
+        //Debug.Log("roomHub:" + roomHub);
+        //Debug.Log("roomHubPos:" + pos);
+        //Debug.Log("roomHubRot:" + rot);
         roomHub.MoveAsync(pos,rot);
         return Task.CompletedTask;
     }
     public void OnMove(Guid connectionId, Vector3 pos, Quaternion rot)
     {
+        if (!IsJoined) return;
+        Debug.Log(OnMoveCharacter);
+        Debug.Log("connectionId:" + connectionId);
+        Debug.Log("pos:" + pos);
+        Debug.Log("rot:" + rot);
         OnMoveCharacter(connectionId, pos, rot);
     }
-
 }

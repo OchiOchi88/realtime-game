@@ -60,6 +60,10 @@ public class GameDirector : MonoBehaviour
         roomModel.OnLeftUser += this.OnLeftUser;
         // ユーザーが退室した時にOnLeftUserAllメソッドを実行できるよう、モデルに登録しておく
         roomModel.OnLeftUserAll += this.OnLeftUserAll;
+        roomModel.OnLeftUserAll += () =>
+        {
+            RemoveAllRemotePlayers(roomModel.ConnectionId);
+        };
     }
 
     // 自分以外のユーザーの移動を反映
@@ -121,7 +125,7 @@ public class GameDirector : MonoBehaviour
             return;
         }
         //入室
-        //pm.Join();
+        pm.Join();
         Debug.Log(myUserId);
         Debug.Log(roomModel);
         leaveButton.transform.gameObject.SetActive(true);
@@ -149,16 +153,17 @@ public class GameDirector : MonoBehaviour
     }
     public async void LeaveRoom()
     {
-        // ルーム名チェック
-        Text text = GameObject.Find("InputRoomNameText").gameObject.GetComponent<Text>();
-        string roomName = text.text;
-        if (roomName == "")
-        {
-            // ルーム名が入力されていない場合は何もしない
-            return;
-        }
+        //// ルーム名チェック
+        //Text text = GameObject.Find("RoomName").gameObject.GetComponent<Text>();
+        //string roomName = text.text;
+        //if (roomName == "")
+        //{
+        //// ルーム名が入力されていない場合は何もしない
+        //return;
+        //}
 
         // 退室
+        pm.Leave();
         await roomModel.LeaveAsync();
     }
 
@@ -168,5 +173,14 @@ public class GameDirector : MonoBehaviour
         {
             Destroy(obj);
         }
+    }
+    public void RemoveAllRemotePlayers(Guid selfId)
+    {
+        foreach (var p in characterList)
+        {
+            if (p.Key != selfId)
+                Destroy(p.Value);
+        }
+        characterList.Clear();
     }
 }

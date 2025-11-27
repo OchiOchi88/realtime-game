@@ -8,6 +8,7 @@ public class PlayerManager : MonoBehaviour
     RoomModel roomModel;
     Vector3 pos;
     Quaternion rot;
+    bool isJoined = false;
     private void Awake()
     {
         GameObject go = GameObject.Find("GameDirector");
@@ -26,11 +27,21 @@ public class PlayerManager : MonoBehaviour
     public void Join()
     {
         transform.position = new Vector3(0, 1, 0);
+        isJoined = true;
+        
+    }
+    public void Leave()
+    {
+        isJoined = false;
     }
     
     private void MoveSend()
     {
         //Debug.Log(roomModel);
+        if (!isJoined)
+        {
+            return;
+        }
         roomModel.MoveAsync(pos, rot);
     }
 }

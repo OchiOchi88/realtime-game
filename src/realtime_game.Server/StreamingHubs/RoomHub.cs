@@ -99,12 +99,6 @@ namespace Server.StreamingHubs
         public Task MoveAsync(Vector3 pos, Quaternion rot)
         {
 
-            //======================================================================================================
-            //                                          中  断  地  点
-            //======================================================================================================
-
-            Console.WriteLine("RoomUsersPosition.pos:" + this.roomContext.RoomUserDataList[this.ConnectionId].pos);    // <-- roomContext.RoomUserDataListがNullReferanceエラーを出す。
-
             // 位置情報を記録
             this.roomContext.RoomUserDataList[this.ConnectionId].pos = pos;
             // 回転情報を記録
