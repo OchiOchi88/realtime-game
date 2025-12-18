@@ -13,7 +13,7 @@ public class PlayerManager : MonoBehaviour
     {
         GameObject go = GameObject.Find("GameDirector");
         roomModel = go.GetComponent<RoomModel>();
-        InvokeRepeating("MoveSend", 0.1f, 0.1f);
+        InvokeRepeating("MoveSend", 0.1f, 0.075f);
     }
     void FixedUpdate()
     {
@@ -26,6 +26,8 @@ public class PlayerManager : MonoBehaviour
     }
     public void Join()
     {
+        Vector3 dir = new Vector3(0, 0, 0);
+        rot = new Quaternion(0, 0, 0, 0);
         transform.position = new Vector3(0, 1, 0);
         isJoined = true;
         

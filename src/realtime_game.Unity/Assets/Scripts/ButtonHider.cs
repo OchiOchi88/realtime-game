@@ -1,10 +1,12 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ButtonHider : MonoBehaviour
 {
 
     void Start()
     {
-        transform.gameObject.SetActive(false);
+        Button me = transform.GetComponent<Button>();
+        me.interactable = false;
     }
 }

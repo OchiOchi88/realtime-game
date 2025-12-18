@@ -19,6 +19,8 @@ public class GameDirector : MonoBehaviour
 {
     [SerializeField] GameObject me;
     [SerializeField] GameObject otherCharacterPrefab;
+    [SerializeField] Button join;
+    [SerializeField] Button leave;
     //[SerializeField] RoomModel roomModel;
     RoomModel roomModel;
     UserModel userModel;
@@ -64,6 +66,7 @@ public class GameDirector : MonoBehaviour
         {
             RemoveAllRemotePlayers(roomModel.ConnectionId);
         };
+        roomModel.OnMoveCharacter += this.OnMoveCharacter;
     }
 
     // 自分以外のユーザーの移動を反映
@@ -76,8 +79,13 @@ public class GameDirector : MonoBehaviour
         }
 
         // DOTweenを使うことでなめらかに動く！
-        characterList[connectionId].transform.DOMove(pos, 0.1f);
+        characterList[connectionId].transform.DOMove(pos, 0.07f);
         characterList[connectionId].transform.position = pos;
+        //roomModel.OnMoveCharacter = null;
+    }
+    void OnMoveCharacter(Guid connectionId, Vector3 pos, Quaternion rot)
+    {
+        OnMoveUser(connectionId, pos, rot);
     }
 
     // ユーザーが退室した時の処理
@@ -103,7 +111,11 @@ public class GameDirector : MonoBehaviour
             OnLeftUser(connectionId);
         }
     }
+    //  全員準備を完了させた
+    public void OnStartGame()
+    {
 
+    }
     public async void JoinRoom()
     {
         string room = roomNameInput.text;
@@ -128,9 +140,20 @@ public class GameDirector : MonoBehaviour
         pm.Join();
         Debug.Log(myUserId);
         Debug.Log(roomModel);
-        leaveButton.transform.gameObject.SetActive(true);
-        await roomModel.JoinAsync(room, myUserId);
-
+        //leaveButton.transform.gameObject.SetActive(true);
+        bool allow = await roomModel.JoinCheck(room);
+        if (allow == true)
+        {
+            join.interactable = false;
+            leave.interactable = true;
+            Debug.Log(join.interactable);
+            await roomModel.JoinAsync(room, myUserId);
+        }
+        else
+        {
+            Debug.Log("参加できません、そのルームは既にゲームを開始しています。");
+            return;
+        }
     }
     //ユーザーが入室した時の処理
     private void OnJoinedUser(JoinedUser user)
@@ -164,6 +187,8 @@ public class GameDirector : MonoBehaviour
 
         // 退室
         pm.Leave();
+        join.interactable = false;
+        leave.interactable = true;
         await roomModel.LeaveAsync();
     }
 
@@ -182,5 +207,9 @@ public class GameDirector : MonoBehaviour
                 Destroy(p.Value);
         }
         characterList.Clear();
+    }
+    public async void OnReady()
+    {
+
     }
 }

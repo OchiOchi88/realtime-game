@@ -3,6 +3,7 @@ using realtime_game.Shared.Interfaces.StreamingHubs;
 using System;
 using UnityEngine;
 using System.Threading.Tasks;
+using System.Globalization;
 namespace Shared.Interfaces.StreamingHubs
 {
     /// <summary>
@@ -14,7 +15,8 @@ namespace Shared.Interfaces.StreamingHubs
 
         // [サーバーに実装]
         // [クライアントから呼び出す]
-
+        //  ユーザーが入室できるかチェック
+        Task<bool> JoinCheck(string roomName);
         // ユーザー入室
         Task<JoinedUser[]> JoinAsync(string roomName, int userId);
 
@@ -26,5 +28,7 @@ namespace Shared.Interfaces.StreamingHubs
 
         //位置・回転をサーバーに送信する
         Task MoveAsync(Vector3 pos, Quaternion rot);
+
+        Task ReadyAsync();
     }
 }

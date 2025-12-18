@@ -15,7 +15,25 @@ namespace Server.StreamingHubs
         private string roomNameHolder;
         private RoomContextRepository roomContextRepos;
         private RoomContext roomContext;
-
+        public async Task<bool> JoinCheck(string roomName)
+        {
+            lock (roomContextRepos)
+            {
+                this.roomContext = roomContextRepos.GetContext(roomName);
+                if(this.roomContext == null)
+                {
+                    return true;
+                }
+                if (this.roomContext.IsStart == true)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
         // ルームに接続
         public async Task<JoinedUser[]> JoinAsync(string roomName, int userId)
         {
@@ -30,7 +48,7 @@ namespace Server.StreamingHubs
                     roomNameHolder = roomName;
                 }
             }
-
+            this.roomContext.IsStart = false;
             // ルームに参加 & ルームを保持
             this.roomContext.Group.Add(this.ConnectionId, Client);
 
@@ -107,6 +125,28 @@ namespace Server.StreamingHubs
             this.roomContext.Group.Except([this.ConnectionId]).OnMove(this.ConnectionId, pos, rot);
 
             return Task.CompletedTask;
+        }
+        //準備完了
+        public async Task ReadyAsync()
+        {
+            //準備出来たことを自分のRoomUserDataに保存
+            var roomUserData = this.roomContext.RoomUserDataList[this.ConnectionId];
+            this.roomContext.RoomUserDataList[this.ConnectionId].ready = true;
+            //全員準備できたか判定
+            bool isReady = true;
+            var roomUserDataList = this.roomContext.RoomUserDataList.Values.ToArray();
+            foreach (var targetRoomUserData in roomUserDataList)
+            {
+                if(targetRoomUserData.ready == false)
+                {
+                    isReady = false;
+                }
+            }
+            if(isReady == true)
+            {
+                this.roomContext.Group.All.OnStartGame();
+                this.roomContext.IsStart = true;
+            }
         }
     }
 }

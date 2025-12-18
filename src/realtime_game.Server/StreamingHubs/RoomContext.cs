@@ -7,19 +7,11 @@ using UnityEngine;
 namespace Server.StreamingHubs
 {
     // ルーム内のユーザー単体の情報
-    public class RoomUserData
-    {
-        public JoinedUser JoinedUser;
-
-        public Vector3 pos { get; set; }
-        public Quaternion rot { get; set; }
-        //public Vector3 pos;   //  デバッグ用の一時的な変数
-        //public Quaternion rot;    //  デバッグ用の一時的な変数
-    }
     public class RoomContext : IDisposable
     {
         public Guid Id { get; } // ルームID
         public string Name { get; } // ルーム名
+        public bool IsStart { get; set; } = false;// 部屋の試合が既に始まっているかどうか(試合中に入室されるのを防ぐため)
         public IMulticastSyncGroup<Guid, IRoomHubReceiver> Group { get; } // グループ
         public Dictionary<Guid, RoomUserData> RoomUserDataList { get; } =
             new Dictionary<Guid, RoomUserData>(); // ユーザデータ一覧

@@ -7,6 +7,7 @@ using System;
 using UnityEngine;
 using realtime_game.Shared.Models.Contexts;
 using System.Threading.Tasks;
+using UnityEngine.SceneManagement;
 
 public class RoomModel : BaseModel, IRoomHubReceiver
 {
@@ -27,7 +28,6 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     public Action<Guid, Vector3, Quaternion> OnMoveCharacter { get; set; }
     public bool IsJoined { get; private set; } = false;
-
 
     //Å@MagicOnionê⁄ë±èàóù
     public async UniTask ConnectAsync()
@@ -111,10 +111,19 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void OnMove(Guid connectionId, Vector3 pos, Quaternion rot)
     {
         if (!IsJoined) return;
-        Debug.Log(OnMoveCharacter);
+        Debug.Log(OnMoveCharacter);     //  Ç±Ç±Ç™null
         Debug.Log("connectionId:" + connectionId);
         Debug.Log("pos:" + pos);
         Debug.Log("rot:" + rot);
-        OnMoveCharacter(connectionId, pos, rot);
+        this.OnMoveCharacter(connectionId, pos, rot);
+    }
+    public async Task<bool> JoinCheck(string roomName)
+    {
+        bool status = await roomHub.JoinCheck(roomName);
+        return status;
+    }
+    public void OnStartGame()
+    {
+        Initiate.Fade("GameScene", new Color(0, 0, 0), 1.0f);
     }
 }
