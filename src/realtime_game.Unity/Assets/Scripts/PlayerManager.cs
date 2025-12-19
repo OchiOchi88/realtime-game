@@ -9,6 +9,12 @@ public class PlayerManager : MonoBehaviour
     Vector3 pos;
     Quaternion rot;
     bool isJoined = false;
+    public float snowBall;   //  éùÇ¡ÇƒÇ¢ÇÈê·ã 
+    public int hp;         //  ëÃóÕ
+    public float power;    //  ìäÇ∞ÇÈóÕÅiçUåÇóÕÅj
+    Vector3 dir;
+    bool isStart = false;
+
     private void Awake()
     {
         GameObject go = GameObject.Find("GameDirector");
@@ -21,12 +27,12 @@ public class PlayerManager : MonoBehaviour
         float z = Input.GetAxis("Vertical");
         pos = transform.transform.position;
         rot = transform.transform.rotation;
-        Vector3 dir = new Vector3(x, 0, z);
+        dir = new Vector3(x, 0, z);
         transform.Translate(dir * speed * Time.deltaTime);
     }
     public void Join()
     {
-        Vector3 dir = new Vector3(0, 0, 0);
+        dir = new Vector3(0, 0, 0);
         rot = new Quaternion(0, 0, 0, 0);
         transform.position = new Vector3(0, 1, 0);
         isJoined = true;
@@ -40,10 +46,19 @@ public class PlayerManager : MonoBehaviour
     private void MoveSend()
     {
         //Debug.Log(roomModel);
+
+        if (dir.x == 0.0f && dir.z == 0.0f && isStart == true)
+        {
+            snowBall += 0.05f;
+        }
         if (!isJoined)
         {
             return;
         }
         roomModel.MoveAsync(pos, rot);
+    }
+    public void GameStart()
+    {
+        isStart = true;    
     }
 }

@@ -30,6 +30,7 @@ public class GameDirector : MonoBehaviour
     public TMP_InputField inputId;
     public Button leaveButton;
     private int myUserId = 4;
+    private bool ready = false;
     User myself;
     [SerializeField] CameraPlayerTracker mt;
     async void Start()
@@ -210,6 +211,14 @@ public class GameDirector : MonoBehaviour
     }
     public async void OnReady()
     {
-
+        await roomModel.OnReady();
+        if(ready == false)
+        {
+            ready = true;
+        }
+        else
+        {
+            ready = false;
+        }
     }
 }

@@ -126,4 +126,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     {
         Initiate.Fade("GameScene", new Color(0, 0, 0), 1.0f);
     }
+    public async Task OnReady()
+    {
+        await roomHub.ReadyAsync();
+    }
 }

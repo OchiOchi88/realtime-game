@@ -150,3 +150,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 3
+  snowBall: 4
+  hp: 3
+  power: 0
