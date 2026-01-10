@@ -17,8 +17,6 @@ public class InGameDirector : MonoBehaviour
 {
     [SerializeField] GameObject me;
     [SerializeField] GameObject otherCharacterPrefab;
-    [SerializeField] Button join;
-    [SerializeField] Button leave;
     //[SerializeField] RoomModel roomModel;
     RoomModel roomModel;
     UserModel userModel;
@@ -30,7 +28,6 @@ public class InGameDirector : MonoBehaviour
     private int myUserId = 4;
     private bool ready = false;
     User myself;
-    [SerializeField] CameraPlayerTracker mt;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

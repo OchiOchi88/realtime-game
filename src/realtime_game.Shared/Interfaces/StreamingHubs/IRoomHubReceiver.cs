@@ -21,5 +21,7 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
         void OnMove(Guid connectionId, Vector3 pos, Quaternion rot);
 
         void OnStartGame();
+        void OnThrowSnowBall(SnowBallData snowBall);
+        void OnSnowBallMove(Guid snowBallId, Vector3 pos, Quaternion rot);
     }
 }

@@ -8,6 +8,8 @@ using UnityEngine;
 using realtime_game.Shared.Models.Contexts;
 using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
+using static UnityEditor.PlayerSettings;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 public class RoomModel : BaseModel, IRoomHubReceiver
 {
@@ -28,7 +30,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     public Action<Guid, Vector3, Quaternion> OnMoveCharacter { get; set; }
     public bool IsJoined { get; private set; } = false;
-
+    public bool IsStart { get; set; } = false;
+    public Guid SnowBall { get; set; }
+    public Action<SnowBallData> OnThrownSnowBall { get; set; }
+    public Action<Guid,Vector3, Quaternion> OnMoveSnowBall { get; set; }
     //Å@MagicOnionê⁄ë±èàóù
     public async UniTask ConnectAsync()
     {
@@ -72,6 +77,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     // ëﬁé∫
     public async UniTask LeaveAsync()
     {
+        IsJoined = false;
         await roomHub.LeaveAsync();
         Debug.Log("ëﬁé∫äÆóπ");
 
@@ -91,6 +97,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
             OnJoinedUser(user);
         }
     }
+    public void OnThrowSnowBall(SnowBallData snowBall)
+    {
+        this.OnThrownSnowBall(snowBall);
+    }
     public void OnLeave(Guid connectionId)
     {
         if (OnLeftUser != null)
@@ -108,14 +118,38 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         roomHub.MoveAsync(pos,rot);
         return Task.CompletedTask;
     }
+    public Task SnowBallMoveAsync(Guid snowBallId,Vector3 pos, Quaternion rot)
+    {
+        roomHub.SnowBallMoveAsync(snowBallId,pos, rot);
+        return Task.CompletedTask;
+    }
+    public async UniTask SnowBallThrowAsync(Vector3 pos, Quaternion rot)
+    {
+        await roomHub.SnowBallThrowAsync(pos, rot);
+    }
     public void OnMove(Guid connectionId, Vector3 pos, Quaternion rot)
     {
-        if (!IsJoined) return;
-        Debug.Log(OnMoveCharacter);     //  Ç±Ç±Ç™null
-        Debug.Log("connectionId:" + connectionId);
-        Debug.Log("pos:" + pos);
-        Debug.Log("rot:" + rot);
+        if (!IsJoined) 
+        { 
+            return;
+        }
+        //Debug.Log(OnMoveCharacter);     
+        //Debug.Log("connectionId:" + connectionId);
+        //Debug.Log("pos:" + pos);
+        //Debug.Log("rot:" + rot);
         this.OnMoveCharacter(connectionId, pos, rot);
+    }
+    public void OnSnowBallMove(Guid snowBallId, Vector3 pos, Quaternion rot)
+    {
+        if (!IsJoined)
+        {
+            return;
+        }
+        //Debug.Log(OnMoveCharacter);     
+        //Debug.Log("connectionId:" + connectionId);
+        //Debug.Log("pos:" + pos);
+        //Debug.Log("rot:" + rot);
+        this.OnMoveSnowBall(snowBallId, pos, rot);
     }
     public async Task<bool> JoinCheck(string roomName)
     {
@@ -124,7 +158,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     }
     public void OnStartGame()
     {
-        Initiate.Fade("GameScene", new Color(0, 0, 0), 1.0f);
+        IsStart = true;
+        //Initiate.Fade("GameScene", new Color(0, 0, 0), 1.0f);
     }
     public async Task OnReady()
     {

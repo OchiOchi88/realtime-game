@@ -3,68 +3,81 @@ using UnityEngine.UI;
 
 public class StatusShower : MonoBehaviour
 {
-    [SerializeField] Image hp;
-    [SerializeField] Image snowBall;
+    [SerializeField] RawImage hp;
+    [SerializeField] RawImage snowBall;
     [SerializeField] Slider power;
     [SerializeField] PlayerManager player;
-    private Image[] displayHp;
-    private Image[] displaySB;
+    private RawImage[] displayHp = new RawImage[3];
+    private RawImage[] displaySB = new RawImage[5];
 
-    private void Start()
+    public void StartGame()
     {
         for (int i = 0; i < player.hp; i++)
         {
-            Image instantiateHp = Instantiate(hp, transform.transform);
-            instantiateHp.rectTransform.anchoredPosition3D = new Vector3(1, 1, 1);
-            instantiateHp.rectTransform.position = new Vector3(75 * i, 0, 0);
+            RawImage instantiateHp = Instantiate(hp, transform.transform);
+            instantiateHp.rectTransform.anchorMin = new Vector2(0, 1);
+            instantiateHp.rectTransform.anchorMax = new Vector2(0, 1);
+            //instantiateHp.rectTransform.anchoredPosition3D = new Vector3(1, 1, 1);
+            instantiateHp.rectTransform.position = new Vector3(75 * i, 450, 0);
             displayHp[i] = instantiateHp;
+            instantiateHp.enabled = true;
         }
-        for (int i = 0; i < player.snowBall; i++)
+        for (int i = 0; i < player.haveSnowBall; i++)
         {
-            Image instantiateSB = Instantiate(snowBall, transform.transform);
-            instantiateSB.rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
-            instantiateSB.rectTransform.position = new Vector3(75 * i, 0, 0);
+            RawImage instantiateSB = Instantiate(snowBall, transform.transform);
+            instantiateSB.rectTransform.anchorMin = new Vector2(0, 0);
+            instantiateSB.rectTransform.anchorMax = new Vector2(0, 0);
+            //instantiateSB.rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
+            instantiateSB.rectTransform.position = new Vector3(30 * i, 0, 0);
             displaySB[i] = instantiateSB;
+            instantiateSB.enabled = true;
         }
     }
     public void Damage()
     {
-        for (int i = 0; i <= displayHp.Length; i++)
+        for (int i = 2; i >= 0; i--)
         {
-            if (i < displayHp.Length)
+            if (displayHp[i] == null)
             {
                 continue;
             }
             Destroy(displayHp[i]);
+            break;
         }
     }   
     public void Throw()
     {
-        for (int i = 0; i <= displaySB.Length; i++)
+        for (int i = 4; i >= 0; i--)
         {
-            if (i < displaySB.Length)
+            if (displaySB[i] == null)
             {
                 continue;
             }
             Destroy(displaySB[i]);
+            break;
         }
+        power.value = 0.0f;
     }
     public void Make()
     {
-        for(int i = 0; i <= displaySB.Length; i++)
+        for(int i = 0; i < displaySB.Length; i++)
         {
-            if(i < displaySB.Length)
+            if(displaySB[i] != null)
             {
                 continue;
             }
-            Image instantiateSB = Instantiate(snowBall, transform.transform);
-            instantiateSB.rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
-            instantiateSB.rectTransform.position = new Vector3(75 * i, 0, 0);
+            RawImage instantiateSB = Instantiate(snowBall, transform.transform);
+            instantiateSB.rectTransform.anchorMin = new Vector2(0, 0);
+            instantiateSB.rectTransform.anchorMax = new Vector2(0, 0);
+            //instantiateSB.rectTransform.anchoredPosition3D = new Vector3(0, 0, 0);
+            instantiateSB.rectTransform.position = new Vector3(30 * i, 0, 0);
             displaySB[i] = instantiateSB;
+            instantiateSB.enabled = true;
+            break;
         }
     }
-    public void Charge()
+    public void Charge(float getPower)
     {
-
+        power.value = getPower;
     }
 }

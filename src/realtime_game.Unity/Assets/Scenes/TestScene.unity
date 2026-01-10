@@ -180,10 +180,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55f47d241ccbaa94aa97ca11d12dabb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  me: {fileID: 0}
-  otherCharacterPrefab: {fileID: 0}
-  join: {fileID: 0}
-  leave: {fileID: 0}
+  me: {fileID: 6207882342399308283, guid: e63034406bf50a64e8bd77bb8a8c40a1, type: 3}
+  otherCharacterPrefab: {fileID: 6207882342399308283, guid: 5747406bf51b58449b80f09ad2b4d661, type: 3}
   roomNameInput: {fileID: 0}
   inputId: {fileID: 0}
   leaveButton: {fileID: 0}

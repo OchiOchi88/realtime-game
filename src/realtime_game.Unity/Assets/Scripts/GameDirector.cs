@@ -17,30 +17,35 @@ using Unity.VisualScripting;
 
 public class GameDirector : MonoBehaviour
 {
+    Dictionary<Guid, GameObject> snowBallDict
+    = new Dictionary<Guid, GameObject>();
     [SerializeField] GameObject me;
     [SerializeField] GameObject otherCharacterPrefab;
     [SerializeField] Button join;
     [SerializeField] Button leave;
+    [SerializeField] GameObject snowBall;
     //[SerializeField] RoomModel roomModel;
     RoomModel roomModel;
     UserModel userModel;
-    PlayerManager pm;
+    [SerializeField] PlayerManager pm;
     Dictionary<Guid, GameObject> characterList = new Dictionary<Guid, GameObject>();
+    GameObject snowballList;
     public TMP_InputField roomNameInput;
     public TMP_InputField inputId;
     public Button leaveButton;
     private int myUserId = 4;
     private bool ready = false;
     User myself;
-    [SerializeField] CameraPlayerTracker mt;
+    private bool isStart = false;
+    [SerializeField] CameraScript mt;
     async void Start()
     {
         Vector3 vct = new Vector3(0, 1, 0);
-        GameObject characterObject = Instantiate(me, vct, Quaternion.identity);  //最初に自キャラのインスタンス生成
-        mt.SendReference(characterObject);
+        //GameObject characterObject = Instantiate(me, vct, Quaternion.identity);  //最初に自キャラのインスタンス生成
         roomModel = GetComponent<RoomModel>();
         userModel = GetComponent<UserModel>();
-        pm = characterObject.GetComponent<PlayerManager>();
+        //pm = characterObject.GetComponent<PlayerManager>();
+        pm.GetMe();
         //ユーザーが入室した時にOnJoinedUserメソッドを実行するよう、モデルに登録しておく
         roomModel.OnJoinedUser += this.OnJoinedUser;
         Debug.Log("roomModel:" + roomModel);
@@ -68,6 +73,8 @@ public class GameDirector : MonoBehaviour
             RemoveAllRemotePlayers(roomModel.ConnectionId);
         };
         roomModel.OnMoveCharacter += this.OnMoveCharacter;
+        roomModel.OnMoveSnowBall += OnSnowBallMove;
+        roomModel.OnThrownSnowBall += OnThrowSnowBall;
     }
 
     // 自分以外のユーザーの移動を反映
@@ -83,6 +90,16 @@ public class GameDirector : MonoBehaviour
         characterList[connectionId].transform.DOMove(pos, 0.07f);
         characterList[connectionId].transform.position = pos;
         //roomModel.OnMoveCharacter = null;
+    }
+    private void OnSnowBallMove(Guid snowBallId, Vector3 pos, Quaternion rot)
+    {
+        if (!snowBallDict.ContainsKey(snowBallId))
+            return;
+
+        var obj = snowBallDict[snowBallId];
+
+        obj.transform.DOMove(pos, 0.07f);
+        obj.transform.rotation = rot;
     }
     void OnMoveCharacter(Guid connectionId, Vector3 pos, Quaternion rot)
     {
@@ -115,7 +132,10 @@ public class GameDirector : MonoBehaviour
     //  全員準備を完了させた
     public void OnStartGame()
     {
-
+        if (isStart)
+        {
+            pm.GameStart();
+        }
     }
     public async void JoinRoom()
     {
@@ -220,5 +240,25 @@ public class GameDirector : MonoBehaviour
         {
             ready = false;
         }
+        isStart = roomModel.IsStart;
+        OnStartGame();
+    }
+    private void OnThrowSnowBall(SnowBallData data)
+    {
+        // すでに存在してたら作らない
+        if (snowBallDict.ContainsKey(data.SnowBall.SnowBallId))
+            return;
+
+        GameObject obj = Instantiate(
+            snowBall,
+            data.pos,
+            data.rot
+        );
+
+        snowBallDict[data.SnowBall.SnowBallId] = obj;
+    }
+    public async void ThrowSnowBall(Vector3 pos, Quaternion rot)
+    {
+        await roomModel.SnowBallThrowAsync(pos, rot);
     }
 }

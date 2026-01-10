@@ -15,6 +15,8 @@ namespace Server.StreamingHubs
         public IMulticastSyncGroup<Guid, IRoomHubReceiver> Group { get; } // グループ
         public Dictionary<Guid, RoomUserData> RoomUserDataList { get; } =
             new Dictionary<Guid, RoomUserData>(); // ユーザデータ一覧
+        public Dictionary<Guid, SnowBallData> SnowBallList { get; } =
+            new Dictionary<Guid, SnowBallData>();   //  フィールド内の雪玉一覧
 
         //  コンストラクタ
         public RoomContext(IMulticastGroupProvider groupProvider, string roomName)

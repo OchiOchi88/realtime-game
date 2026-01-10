@@ -1,3 +1,4 @@
+using Unity.Entities.UniversalDelegates;
 using UnityEngine;
 
 public class StageGenerate : MonoBehaviour
@@ -31,9 +32,9 @@ public class StageGenerate : MonoBehaviour
             {
                 continue;
             }
-            Vector3 vct3 = new Vector3((x - 1) * i, 0, 0);
-            border = Instantiate(wall, vct3, transform.rotation);
-            border.transform.localScale = new Vector3(1, 100.0f, 100.0f);
+            Vector3 vct3 = new Vector3((x - 0.5f) * i, 0, 0);
+            border = Instantiate(wall, vct3, Quaternion.Euler(0,0,(-90)*i));
+            //border.transform.localScale = new Vector3(1, 100.0f, 100.0f);
         }
         for(int j = -1; j <= 1; j++)
         {
@@ -41,9 +42,9 @@ public class StageGenerate : MonoBehaviour
             {
                 continue;
             }
-            Vector3 vct3 = new Vector3(0, 0, (z) * j);
-            border = Instantiate(wall, vct3, transform.rotation);
-            border.transform.localScale = new Vector3(100.0f, 100.0f, 1);
+            Vector3 vct3 = new Vector3(0, 0, (z -0.5f) * j);
+            border = Instantiate(wall, vct3, Quaternion.Euler((-90) * j,0,0));
+            //border.transform.localScale = new Vector3(100.0f, 100.0f, 1);
         }
     }
 }

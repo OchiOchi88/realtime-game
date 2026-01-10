@@ -30,5 +30,9 @@ namespace Shared.Interfaces.StreamingHubs
         Task MoveAsync(Vector3 pos, Quaternion rot);
 
         Task ReadyAsync();
+
+        //Task StartAsync();
+        Task SnowBallMoveAsync(Guid connectionId, Vector3 pos, Quaternion rot);
+        Task SnowBallThrowAsync(Vector3 pos, Quaternion rot);
     }
 }

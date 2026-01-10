@@ -126,6 +126,44 @@ namespace Server.StreamingHubs
 
             return Task.CompletedTask;
         }
+        //  雪玉の位置同期
+        public Task SnowBallMoveAsync(Guid snowBallId, Vector3 pos, Quaternion rot)
+        {
+            if (!this.roomContext.SnowBallList.ContainsKey(snowBallId))
+                return Task.CompletedTask;
+
+            var data = this.roomContext.SnowBallList[snowBallId];
+            data.pos = pos;
+            data.rot = rot;
+
+            this.roomContext.Group
+                .Except([this.ConnectionId])
+                .OnSnowBallMove(snowBallId, pos, rot);
+
+            return Task.CompletedTask;
+        }
+        public Task SnowBallThrowAsync(Vector3 pos, Quaternion rot)
+        {
+            var snowBall = new SnowBall
+            {
+                SnowBallId = Guid.NewGuid(),
+                OwnerConnectionId = this.ConnectionId
+            };
+
+            var snowBallData = new SnowBallData
+            {
+                SnowBall = snowBall,
+                pos = pos,
+                rot = rot
+            };
+
+            this.roomContext.SnowBallList[snowBall.SnowBallId] = snowBallData;
+
+            // 全員に「生成」を通知
+            this.roomContext.Group.All.OnThrowSnowBall(snowBallData);
+
+            return Task.CompletedTask;
+        }
         //準備完了
         public async Task ReadyAsync()
         {
@@ -148,5 +186,9 @@ namespace Server.StreamingHubs
                 this.roomContext.IsStart = true;
             }
         }
+        //public async Task StartAsync()
+        //{
+
+        //}
     }
 }
