@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Grpc.Core;
+using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using MagicOnion;
 using MagicOnion.Client;
@@ -19,6 +20,22 @@ public class UserModel : BaseModel
     //private int userID; //  自分のユーザーID
     private string userName;    //  入力される想定の自分のユーザー名
     static public string nameData;
+    private static UserModel instance;
+    public static UserModel Instance
+    {
+        get
+        {
+            if (instance == null) instance = new UserModel();
+            return instance;
+        }
+    }
+
+    private IUserService CreateClient()
+    {
+        var channel = GrpcChannelProvider.GetChannel();
+        var invoker = channel.Intercept(new GameIdInterceptor());
+        return MagicOnionClient.Create<IUserService>(invoker);
+    }
 
     //  プロパティ
     public string Name
@@ -29,26 +46,26 @@ public class UserModel : BaseModel
         }
     }
 
-    private static UserModel instance;
-    public static UserModel Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = new UserModel();
-            }
-            return instance;
-        }
-    }
+    //private static UserModel instance;
+    //public static UserModel Instance
+    //{
+    //    get
+    //    {
+    //        if (instance == null)
+    //        {
+    //            instance = new UserModel();
+    //        }
+    //        return instance;
+    //    }
+    //}
     void Start()
     {
         DontDestroyOnLoad(gameObject);
     }
     public async UniTask<bool> RegistUserAsync(string name)
     {
-        var channel = GrpcChannelx.ForAddress(ServerURL);
-        var client = MagicOnionClient.Create<IUserService>(channel);
+        var client = CreateClient();
+
         try
         {   //  登録成功
             userId = await client.RegistUserAsync(name);
@@ -62,8 +79,7 @@ public class UserModel : BaseModel
     }
     public async UniTask<User> GetUserAsync(int id)
     {
-        var channel = GrpcChannelx.ForAddress(ServerURL);
-        var client = MagicOnionClient.Create<IUserService>(channel);
+        var client = CreateClient();
         try
         {
             //  取得成功

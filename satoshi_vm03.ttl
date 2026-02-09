@@ -1,0 +1,16 @@
+username = 'student'
+hostname = 'ge202400.japaneast.cloudapp.azure.com'
+userkeyfile = 'C:\Users\student\.ssh\satoshi_vm_key03'
+portnum = '22'
+
+msg = hostname
+strconcat msg ':'
+strconcat msg portnum
+strconcat msg ' /ssh /2 /auth=publickey /user='
+strconcat msg username
+strconcat msg ' /keyfile='
+strconcat msg userkeyfile
+ 
+connect msg
+ 
+settitle 'Azure VM'

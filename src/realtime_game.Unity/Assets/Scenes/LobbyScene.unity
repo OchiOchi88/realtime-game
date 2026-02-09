@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 20d4f77b9022eab48b4d94599ed4bf82, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: f68989c586379ea4086775ee7dbff99b, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -4623,6 +4623,10 @@ PrefabInstance:
       propertyPath: result
       value: 
       objectReference: {fileID: 1678712099}
+    - target: {fileID: -6781240016316575943, guid: e63034406bf50a64e8bd77bb8a8c40a1, type: 3}
+      propertyPath: damaged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -6781240016316575943, guid: e63034406bf50a64e8bd77bb8a8c40a1, type: 3}
       propertyPath: snowBall
       value: 

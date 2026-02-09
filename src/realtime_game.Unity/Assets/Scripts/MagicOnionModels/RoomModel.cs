@@ -10,10 +10,11 @@ using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using static UnityEditor.PlayerSettings;
 using static UnityEngine.Rendering.DebugUI.Table;
+using Grpc.Net.Client;
 
 public class RoomModel : BaseModel, IRoomHubReceiver
 {
-    private GrpcChannelx channel;
+    private GrpcChannel channel;
     private IRoomHub roomHub;
 
     //　接続ID
@@ -37,10 +38,39 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
     {
-        channel = GrpcChannelx.ForAddress(ServerURL);
-        roomHub = await StreamingHubClient.
-             ConnectAsync<IRoomHub, IRoomHubReceiver>(channel, this);
-        this.ConnectionId = await roomHub.GetConnectionId();
+        try
+        {
+            Debug.Log("ConnectAsync start");
+
+            channel = GrpcChannelProvider.GetChannel();
+            Debug.Log("Connecting to Hub...");
+            try
+            {
+                this.roomHub = await MagicOnion.Client.StreamingHubClient.ConnectAsync<IRoomHub, IRoomHubReceiver>(
+                    channel,
+                    this,
+                    option: commonCallOptions
+                );
+
+                Debug.Log("★Success: Connected with CallOptions Headers!");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"ConnectAsync failed: {e}");
+            }
+
+            Debug.Log("ConnectAsync Success!");
+            //・・・
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("ConnectAsync failed: " + ex);
+        }
+
+    //channel = GrpcChannelx.ForAddress(ServerURL);
+    //    roomHub = await StreamingHubClient.
+    //         ConnectAsync<IRoomHub, IRoomHubReceiver>(channel, this);
+    //    this.ConnectionId = await roomHub.GetConnectionId();
     }
 
     //　MagicOnion切断処理

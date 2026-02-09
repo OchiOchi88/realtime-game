@@ -54,16 +54,6 @@ public class GameDirector : MonoBehaviour
 
         //接続
         await roomModel.ConnectAsync();
-        try
-        {
-            // ユーザー情報を取得
-            myself = await userModel.GetUserAsync(myUserId);
-        }
-        catch (Exception e)
-        {
-            Debug.Log("RegistUser failed");
-            Debug.LogException(e);
-        }
         // ユーザーが退室した時にOnLeftUserメソッドを実行できるよう、モデルに登録しておく
         roomModel.OnLeftUser += this.OnLeftUser;
         // ユーザーが退室した時にOnLeftUserAllメソッドを実行できるよう、モデルに登録しておく
@@ -139,6 +129,16 @@ public class GameDirector : MonoBehaviour
     }
     public async void JoinRoom()
     {
+        try
+        {
+            // ユーザー情報を取得
+            myself = await userModel.GetUserAsync(myUserId);
+        }
+        catch (Exception e)
+        {
+            Debug.Log("RegistUser failed");
+            Debug.LogException(e);
+        }
         string room = roomNameInput.text;
         string idHolder = inputId.text;
         bool isSuccess = int.TryParse(idHolder, out myUserId);
